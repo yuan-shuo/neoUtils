@@ -130,6 +130,7 @@ if __name__ == "__main__":
     edge2 = {'label':'test_for', 'name': 'oalse', 'age': "20-219"}
 
     # gdb.main(spo=spo1)
-    gdb.delBase()
+    # gdb.delBase()
     gdb.merge(spo1, spo2, edge1)
     gdb.merge(spo1, spo2, edge2)
+    print(gdb.customCypher("match(n) return n.name"))
