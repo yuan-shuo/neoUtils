@@ -88,13 +88,33 @@ class NeoUtils:
         return que
     
     def merge(self, dict_subject, dict_object, dict_edge):
-        que = f"MERGE {self.createNodesQue('s', dict_subject)}-{self.createEdgesQue(dict_edge)}->{self.createNodesQue('o', dict_object)}"
+
+        # 生成主体节点和对象节点的匹配或创建语句
+        subject_node = self.createNodesQue('s', dict_subject)
+        object_node = self.createNodesQue('o', dict_object)
+        
+        # 生成关系的匹配或创建语句
+        edge = self.createEdgesQue(dict_edge)
+
+        # 构建 Cypher 语句
+        que = f"""
+        MERGE {subject_node}
+        MERGE {object_node}
+        MERGE (n_s)-{edge}->(n_o)
+        """
+
         # print(que)
 
         with self.driver.session() as session:
             session.run(que)
 
         return 0
+    
+    def customCypher(self, cypher:str):
+        with self.driver.session() as session:
+            res = session.run(cypher)
+
+        return res
 
 
 # 使用示例
@@ -106,7 +126,10 @@ if __name__ == "__main__":
     gdb = NeoUtils(uri, user, pwd, dbName=myDBName)
     spo1 = {'label':'person', 'name': 'learnYes', 'age': 10}
     spo2 = {'label':'mokey', 'name': 'learnObj', 'age': 14}
-    edge = {'label':'WORK_FOR', 'name': 'oelse', 'age': "16-19"}
+    edge1 = {'label':'WORK_FOR', 'name': 'oelse', 'age': "16-19"}
+    edge2 = {'label':'test_for', 'name': 'oalse', 'age': "20-219"}
 
     # gdb.main(spo=spo1)
-    gdb.merge(spo1, spo2, edge)
+    gdb.delBase()
+    gdb.merge(spo1, spo2, edge1)
+    gdb.merge(spo1, spo2, edge2)
